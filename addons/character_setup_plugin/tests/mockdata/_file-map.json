@@ -1,0 +1,40 @@
+{
+  "res://sprites/character_sheet.png": {
+    "type": "sprite",
+    "tag": "character",
+    "last_modified": 1623456789.0,
+    "sprite_count": 12,
+    "rows": 4,
+    "columns": 3,
+    "collision_shapes": []
+  },
+  "res://sprites/background.jpeg": {
+    "type": "sprite",
+    "tag": "generic",
+    "last_modified": 1623456790.0,
+    "sprite_count": 1,
+    "rows": 1,
+    "columns": 1,
+    "collision_shapes": []
+  },
+  "res://audio/music.wav": {
+    "type": "audio",
+    "tag": "audio",
+    "last_modified": 1623456791.0
+  },
+  "res://audio/sfx_explosion.ogg": {
+    "type": "audio",
+    "tag": "audio",
+    "last_modified": 1623456792.0
+  },
+  "res://scenes/player.tscn": {
+    "type": "scene",
+    "tag": "player",
+    "last_modified": 1623456793.0
+  },
+  "res://scripts/game.gd": {
+    "type": "script",
+    "tag": "generic",
+    "last_modified": 1623456794.0
+  }
+}
