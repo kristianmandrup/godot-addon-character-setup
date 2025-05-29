@@ -1,0 +1,27 @@
+{
+    "res://characters/player/sprites/player_sheet.png": {
+        "type": "sprite",
+        "tag": "character",
+        "character_name": "Player"
+    },
+    "res://characters/player/audio/player_idle.wav": {
+        "type": "audio",
+        "tag": "audio",
+        "character_name": "Player"
+    },
+    "res://characters/player/audio/player_walk.wav": {
+        "type": "audio",
+        "tag": "audio",
+        "character_name": "Player"
+    },
+    "res://characters/player/player.tscn": {
+        "type": "scene",
+        "tag": "scene",
+        "character_name": "Player"
+    },
+    "res://characters/player/player.gd": {
+        "type": "script",
+        "tag": "script",
+        "character_name": "Player",
+        "linked_scene": "res://characters/player/player.tscn"
+    }

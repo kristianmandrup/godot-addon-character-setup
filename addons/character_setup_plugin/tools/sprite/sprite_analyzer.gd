@@ -66,73 +66,43 @@ func generate_collision_shape(sprite_path: String, shape_type: CollisionShapeTyp
     }
 
 func analyze_sprite_local(image_path: String) -> Dictionary:
-    if not check_opencv_availability():
+    if not PythonUtils.check_opencv_availability():
         print("OpenCV not available; falling back to heuristic")
         return heuristic_sprite_analysis(image_path)
     
-    var python_path = get_python_path()
-    var script_path = ProjectSettings.globalize_path("res://addons/character_setup_plugin/scripts/sprite_analyzer.py")
+    var python_path = PythonUtils.get_python_path()
+    var script_path = ProjectSettings.globalize_path("res://addons/character_setup_plugin/scripts/analyze_sprite_sheet.py")
     var absolute_image_path = ProjectSettings.globalize_path(image_path)
     
     var output = []
-    var exit_code = OS.execute(python_path, [script_path, absolute_image_path], output, true)
+    var api_key = ProjectSettings.get_setting("plugins/character_setup_plugin/api_key", "")
+    var args = [script_path, absolute_image_path]
+    
+    # Set OPENAI_API_KEY environment variable if available
+    if api_key:
+        OS.set_environment("OPENAI_API_KEY", api_key)
+    
+    var exit_code = OS.execute(python_path, args, output, true)
     
     if exit_code == 0 and output.size() > 0:
         var json = JSON.parse_string(output[0])
-        if json.has("error"):
-            print("Python error: ", json.error)
-            return heuristic_sprite_analysis(image_path)
-        return json
+        if json is Dictionary and not json.has("error"):
+            return json
+        print("Python error: ", json.get("error", "Invalid JSON"))
     else:
         print("Python script failed: ", output)
-        return heuristic_sprite_analysis(image_path)
+    
+    return heuristic_sprite_analysis(image_path)
 
 func heuristic_sprite_analysis(image_path: String) -> Dictionary:
     var image = Image.load_from_file(image_path)
     return {
+        "image_type": "single_sprite",
+        "height": image.get_height(),
+        "width": image.get_width(),
         "sprite_count": 1,
         "rows": 1,
         "columns": 1,
-        "collision_shapes": [[Vector2(0, 0), Vector2(image.get_width(), 0), Vector2(image.get_width(), image.get_height()), Vector2(0, image.get_height())]]
+        "collision_shapes": [],
+        "animations": [{"name": "Idle", "frame_count": 1, "frame_range": [1, 1]}]
     }
-
-func check_opencv_availability() -> bool:
-    var output = []
-    var exit_code = OS.execute("python", ["-c", "import cv2, numpy"], output, true)
-    return exit_code == 0
-
-func install_python_dependencies() -> bool:
-    var python_path = get_python_path()
-    if python_path == "":
-        print("Error: Python not found. Please install Python 3.x.")
-        return false
-    
-    var requirements_path = ProjectSettings.globalize_path("res://addons/character_setup_plugin/requirements.txt")
-    if not FileAccess.file_exists("res://addons/character_setup_plugin/requirements.txt"):
-        print("Error: requirements.txt not found.")
-        return false
-    
-    var output = []
-    var exit_code = OS.execute(python_path, ["-m", "pip", "install", "-r", requirements_path], output, true)
-    
-    if exit_code == 0:
-        print("Python dependencies installed successfully.")
-        return true
-    else:
-        print("Failed to install dependencies: ", output)
-        return false
-
-func get_python_path() -> String:
-    var candidates = [
-        "python",
-        "python3",
-        "C:/Python39/python.exe",
-        "/usr/bin/python3",
-        "/usr/local/bin/python3"
-    ]
-    for candidate in candidates:
-        var output = []
-        if OS.execute(candidate, ["-c", "import sys"], output, true) == 0:
-            return candidate
-    print("Error: Python not found.")
-    return "python"

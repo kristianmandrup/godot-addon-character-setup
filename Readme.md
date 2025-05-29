@@ -47,7 +47,7 @@ git clone https://github.com/kristianmandrup/character-setup-plugin.git addons/c
 
 # Install Node.js
 
-1. Install [Node.js](https://nodejs.org/en/download/).
+Install [Node.js](https://nodejs.org/en/download/)
 
 ## File Detectors
 
@@ -61,3 +61,20 @@ git clone https://github.com/kristianmandrup/character-setup-plugin.git addons/c
 - **HitBox**: Generates hitboxes (full sprite), red.
 - **DetectionArea**: Generates detection areas (3x collision, circular), green.
 - Configure colors in the settings panel.
+
+## SpriteAnalyzer
+
+- **Purpose**: Classifies images (single sprite, background, sprite sheet) and analyzes sprite sheets for animations.
+- **Script**: `analyze_sprite_sheet.py` uses OpenCV and optional OpenAI GPT-4o.
+- **Metadata**: Includes `image_type`, `animations` (name, frame_count, frame_range).
+- **Usage**: Triggered by `AssetMapUpdater` via `@mcp character-setup-mcp update_asset_map`.
+
+## Audio-Animation Matching
+
+- Matches audio to animations using `character_name` and animation names.
+- Stores `linked_animation` in audio metadata.
+
+## Scene/Script Maps
+
+- Scene map links `character_name` to `.tscn` files.
+- Script map associates `.gd` files with scenes via `linked_scene`.

@@ -5,9 +5,9 @@ var debug_color: Color
 
 func _init(_sprite_analyzer: SpriteAnalyzer):
     sprite_analyzer = _sprite_analyzer
-    debug_color = ProjectSettings.get_setting("plugins/character_setup_plugin/character_area_color", Color.GREEN)
+    debug_color = ProjectSettings.get_setting("plugins/character_setup_plugin/detection_area_color", Color.GREEN)
 
-func generate_character_area(sprite_path: String) -> Area2D:
+func generate_detection_area(sprite_path: String) -> Area2D:
     var shape_data = sprite_analyzer.generate_collision_shape(sprite_path, SpriteAnalyzer.CollisionShapeType.CIRCLE, "feet")
     if shape_data.is_empty():
         return null

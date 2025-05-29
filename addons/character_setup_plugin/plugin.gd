@@ -44,7 +44,7 @@ func _ready():
 
 	collision_color_field.color = ProjectSettings.get_setting("plugins/character_setup_plugin/collision_box_color", Color.BLUE)
     hit_color_field.color = ProjectSettings.get_setting("plugins/character_setup_plugin/hit_box_color", Color.RED)
-    area_color_field.color = ProjectSettings.get_setting("plugins/character_setup_plugin/character_area_color", Color.GREEN)    
+    area_color_field.color = ProjectSettings.get_setting("plugins/character_setup_plugin/detection_area_color", Color.GREEN)    
 	asset_map_path_field.text = ProjectSettings.get_setting("plugins/character_setup_plugin/asset_map_path", "res://game_asset_map.json")
 
 	# GAS settings
@@ -86,7 +86,7 @@ func _on_save_pressed():
 	# Save colors
     ProjectSettings.set_setting("plugins/character_setup_plugin/collision_box_color", collision_color_field.color)
     ProjectSettings.set_setting("plugins/character_setup_plugin/hit_box_color", hit_color_field.color)
-    ProjectSettings.set_setting("plugins/character_setup_plugin/character_area_color", area_color_field.color)
+    ProjectSettings.set_setting("plugins/character_setup_plugin/detection_area_color", area_color_field.color)
 
 	# Save asset map path
     ProjectSettings.set_setting("plugins/character_setup_plugin/asset_map_path", asset_map_path_field.text)

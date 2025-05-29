@@ -18,9 +18,9 @@ func assign_sprite(scene_path: String, node_name: String, sprite_path: String):
     return "Error: Node not found or not a Sprite2D"
 
 func _enter_tree():
-    if not check_opencv_availability():
+    if not PythonTools.check_opencv_availability():
         print("Installing Python dependencies...")
-        if not install_python_dependencies():
+        if not PythonTools.install_python_dependencies():
             print("Try creating a virtual environment: 'python -m venv venv' and activate it before running Godot.")        
     
 func add_collision_shape(scene_path: String, node_name: String, collision_points: Array):

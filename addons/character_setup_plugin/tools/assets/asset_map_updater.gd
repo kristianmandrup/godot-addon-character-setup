@@ -4,6 +4,7 @@ var asset_manager: GameAssetManager
 var sprite_analyzer: SpriteAnalyzer
 var image_detector: ImageDetector
 var audio_detector: AudioDetector
+var detectors: Array[BaseFileTypeDetector] = []
 var file_map_path: String = "res://addons/character_setup_plugin/file_map.json"
 
 func _init():
@@ -14,6 +15,7 @@ func _init():
     var audio_extensions = ProjectSettings.get_setting("plugins/character_setup_plugin/audio_extensions", [".wav", ".ogg", ".mp3"])
     image_detector = ImageDetector.new(tag_inferer, image_extensions, asset_manager)
     audio_detector = AudioDetector.new(tag_inferer, audio_extensions, asset_manager)
+    detectors.append_array([image_detector, audio_detector])
 
 func update_asset_map(sync_gas: bool = false) -> Dictionary:
     var file_map = load_file_map()
@@ -24,29 +26,69 @@ func update_asset_map(sync_gas: bool = false) -> Dictionary:
     var updated_assets = 0
     var errors = []
 
+    # Process sprites first to get animations
+    var sprite_animations = {}
     for file_path in file_map.keys():
         var file_metadata = file_map[file_path]
-        var file_name = file_path.get_file()
-        var metadata = {}
+        if file_metadata.get("type") == "sprite" and file_metadata.get("image_type") == "sprite_sheet":
+            var metadata = image_detector.detect(file_path, file_path.get_file())
+            if not metadata.is_empty():
+                sprite_animations[file_path] = {
+                    "character_name": file_metadata.get("character_name", ""),
+                    "animations": metadata.get("animations", [])
+                }
+                asset_manager.add_asset(file_path, metadata)
+                updated_assets += 1
+                if sync_gas:
+                    var result_code = await sync_asset_to_gas(file_path, metadata)
+                    if result_code.get("error"):
+                        errors.append({"file_path": file_path, "error": result_code.error})
 
-        if file_metadata.get("type") == "sprite":
-            metadata = image_detector.detect(file_path, file_name)
-        elif file_metadata.get("type") == "audio":
-            metadata = audio_detector.detect(file_path, file_name)
+    # Match audio to animations
+    for file_path in file_map.keys():
+        var file_metadata = file_map[file_path]
+        if file_metadata.get("type") == "audio":
+            var metadata = audio_detector.detect(file_path, file_path.get_file())
+            if not metadata.is_empty():
+                var audio_character = file_metadata.get("character_name", "")
+                var audio_name = file_path.get_basename().get_file().to_lower()
+                
+                # Find matching sprite animations
+                for sprite_path in sprite_animations:
+                    var sprite_data = sprite_animations[sprite_path]
+                    if sprite_data.character_name == audio_character:
+                        for anim in sprite_data.animations:
+                            var anim_name = anim.name.to_lower()
+                            if anim_name in audio_name:
+                                metadata["linked_animation"] = {
+                                    "sprite_path": sprite_path,
+                                    "animation_name": anim.name
+                                }
+                                break
+                
+                asset_manager.add_asset(file_path, metadata)
+                updated_assets += 1
+                if sync_gas:
+                    var result_code = await sync_asset_to_gas(file_path, metadata)
+                    if result_code.get("error"):
+                        errors.append({"file_path": file_path, "error": result_code.error})
 
-        if file_metadata.last_modified == asset_manager.get_asset(file_path).get("last_modified"):
-            continue
-
-        if not metadata.is_empty():
-            # Update game_asset_map.json
-            asset_manager.add_asset(file_path, metadata)
-            updated_assets += 1
-
-            # Sync to GAS if requested
-            if sync_gas:
-                var result = await sync_asset_to_gas(file_path, metadata)
-                if result.get("error"):
-                    errors.append({"file_path": file_path, "error": result.error})
+    # Process remaining assets (scenes, scripts, etc.)
+    for file_path in file_map.keys():
+        var file_metadata = file_map[file_path]
+        if file_metadata.get("type") not in ["sprite", "audio"]:
+            var metadata = {}
+            for detector in detectors:
+                metadata = detector.detect(file_path, file_path.get_file())
+                if not metadata.is_empty():
+                    break
+            if not metadata.is_empty():
+                asset_manager.add_asset(file_path, metadata)
+                updated_assets += 1
+                if sync_gas:
+                    var result_code = await sync_asset_to_gas(file_path, metadata)
+                    if result_code.get("error"):
+                        errors.append({"file_path": file_path, "error": result_code.error})
 
     var result = {
         "status": "success",
@@ -58,8 +100,9 @@ func update_asset_map(sync_gas: bool = false) -> Dictionary:
     return result
 
 
-func update_gas_from_asset_map(file_map: Dictionary) -> Dictionary:
-    save_asset_map()
+func update_gas_from_asset_map() -> Dictionary:
+    asset_manager.save_all_assets_in_gas()
+    return {"status": "success"}
 
 func load_file_map() -> Dictionary:
     var file_map = {}

@@ -1,0 +1,45 @@
+{
+  "res://sprites/player.png": {
+    "type": "sprite",
+    "tag": "character",
+    "last_modified": 1623456789.0,
+    "image_type": "single_sprite",
+    "height": 32,
+    "width": 32,
+    "sprite_count": 1,
+    "animations": [{ "name": "Idle", "frame_count": 1, "frame_range": [1, 1] }],
+    "collision_shapes": [[]],
+    "collision_box": {},
+    "hit_box": {},
+    "detection_area": {}
+  },
+  "res://backgrounds/level1.png": {
+    "type": "sprite",
+    "tag": "background",
+    "last_modified": 1623456790.0,
+    "image_type": "background",
+    "height": 1080,
+    "width": 1920,
+    "sprite_count": 15,
+    "collision_shapes": [[]]
+  },
+  "res://sprites/player_sheet.png": {
+    "type": "sprite",
+    "tag": "character",
+    "last_modified": 1623456791.0,
+    "image_type": "sprite_sheet",
+    "height": 128,
+    "width": 128,
+    "sprite_count": 8,
+    "rows": 2,
+    "columns": 4,
+    "animations": [
+      { "name": "Idle", "frame_count": 4, "frame_range": [1, 4] },
+      { "name": "Walk", "frame_count": 4, "frame_range": [5, 8] }
+    ],
+    "collision_shapes": [[]],
+    "collision_box": null,
+    "hit_box": null,
+    "detection_area": null
+  }
+}

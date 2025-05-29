@@ -1,0 +1,21 @@
+{
+  "res://characters/player/sprites/player_sheet.png": {
+    "type": "sprite",
+    "tag": "character",
+    "character_name": "Player",
+    "image_type": "sprite_sheet",
+    "animations": [
+      { "name": "Idle", "frame_count": 4, "frame_range": [1, 4] },
+      { "name": "Walk", "frame_count": 4, "frame_range": [5, 8] }
+    ]
+  },
+  "res://characters/player/audio/player_walk.wav": {
+    "type": "audio",
+    "tag": "audio",
+    "character_name": "Player",
+    "linked_animation": {
+      "sprite_path": "res://characters/player/sprites/player_sheet.png",
+      "animation_name": "Walk"
+    }
+  }
+}

@@ -7,9 +7,10 @@ func _init(_tag_inferer: TagInferer):
 
 func detect(file_path: String, file_name: String) -> Dictionary:
     if file_name.ends_with(".tscn"):
+        var character_name = file_path.get_base_dir().get_file().capitalize()
         return {
             "type": "scene",
             "tag": tag_inferer.infer_tag(file_path),
+            "character_name": character_name,
             "last_modified": FileAccess.get_modified_time(file_path)
         }
-    return {}
