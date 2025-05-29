@@ -13,3 +13,5 @@ func detect(file_path: String, file_name: String) -> Dictionary:
         "tag": tag_inferer.infer_tag(file_path),
         "last_modified": FileAccess.get_modified_time(file_path)
     }
+
+
