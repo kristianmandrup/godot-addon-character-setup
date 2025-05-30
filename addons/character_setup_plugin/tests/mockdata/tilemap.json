@@ -1,12 +1,10 @@
 {
+  "tilemap_name": "Ground",
+  "filepath": "res://scenes/levels/Level1.tscn",
   "tile_size": [16, 16],
-  "grid_dimensions": [10, 5],
+  "grid_dimensions": [8, 4],
   "tiles": [
-    {
-      "tile_id": [0, 0],
-      "is_obstacle": true,
-      "collision_polygons": [[0, 0, 16, 0, 16, 16, 0, 16]]
-    },
-    { "tile_id": [1, 0], "is_obstacle": false, "collision_polygons": [] }
+    { "tile_id": [0, 0], "is_obstacle": false },
+    { "tile_id": [1, 0], "is_obstacle": false }
   ]
 }
